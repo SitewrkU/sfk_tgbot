@@ -16,7 +16,8 @@
     "@grammyjs/menu": "^1.3.1",
     "@grammyjs/parse-mode": "^1.11.1",
     "dotenv": "^17.3.1",
-    "grammy": "^1.40.0"
+    "grammy": "^1.40.0",
+    "grammy-edit-or-reply": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^25.2.3",

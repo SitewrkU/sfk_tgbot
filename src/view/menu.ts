@@ -1,27 +1,61 @@
 import { Menu } from "@grammyjs/menu";
-import { getCurrentDate } from "../lib/GetDate.js";
+import { getCurrentDate, getNextDate } from "../lib/GetDate.js";
+import { checkIfNextDay } from "../lib/CheckIfNextDay.js";
+import { type EditOrReplyFlavor, editOrReplyMiddleware } from "grammy-edit-or-reply";
 
 export const mainMenu = new Menu('main-menu')
   .text("Розклад", async (ctx) => {
-    const date = getCurrentDate()
-    const response = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=%D0%9A-11&date=${date}`)
-    
-    if (!response.ok) {
-      throw new Error(`Помилка API: ${response.status}`);
-      await ctx.reply('Не вдалося отримати розклад занять');
+    const isNextDay = checkIfNextDay()
+
+    const loadingMsg = await ctx.reply(`🔃 Отримання даних...`);
+
+    const editLoading = (text: string) =>
+      ctx.api.editMessageText(ctx.chat!.id, loadingMsg.message_id, text);
+
+
+    let response;
+    try {
+      let date = isNextDay ? getNextDate() : getCurrentDate();
+      let data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=%D0%9A-11&date=${date}`)
+        .then(r => r.json());
+
+      if((!data.schedule || data.schedule.length === 0) && isNextDay){
+        await editLoading('⚠️ Розклад на завтра відсутній. Спроба поверути сьогоднішній...')
+        date = getCurrentDate();
+        data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=%D0%9A-11&date=${date}`)
+          .then(r => r.json());
+      }
+
+      if (!data.schedule || data.schedule.length === 0) {
+        await editLoading('❌ Розклад відсутній на обидва дні.');
+        return;
+      }
+
+      const schedule = data.schedule.map((item: { name: any; }) => item); 
+      await editLoading(`✅ Розклад на <u><b>${date}</b></u>`)
+
+      let scheduleResult: string = "";
+      for(const item of schedule){
+        scheduleResult += `[${item.pairNumber}] ${item.subject}\nАудиторія: <u><b>${item.room}</b></u> | 🕑 <b>${item.time}</b>` + "\n\n";
+      }
+
+
+      ctx.reply(scheduleResult);
+
+    } catch (err) {
+      await ctx.api.editMessageText(
+        ctx.chat!.id,
+        loadingMsg.message_id,
+        '❌ Не вдалося отримати дані'
+      );
+      console.log(err)
     }
-
-    const data = await response.json();
-    const schedule = data.schedule.map((item: { name: any; }) => item); 
-    await ctx.reply(`📄 Розклад на <u><b>${date}</b></u>`);
-    let scheduleResult: string = "";
-    for(const item of schedule){
-      scheduleResult += `[${item.pairNumber}] ${item.subject}\nАудиторія: <u><b>${item.room}</b></u>` + "\n\n";
-    }
-
-    ctx.reply(scheduleResult);
-
   })
+  
+  .text("Пара зараз", async (ctx) => {
+    await ctx.reply('Зараз пара');
+  })
+  .row()
   .text("Налаштування", async (ctx) => {
     await ctx.reply('Налаштування');
   })
