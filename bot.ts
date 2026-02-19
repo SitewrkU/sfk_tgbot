@@ -28,12 +28,12 @@ bot.command('start', async (ctx) => {
 
 bot.command('info', async (ctx) => {
   await ctx.reply('<u>Інформація про проєкт</u>')
-  await ctx.reply('Цей проєкт створений виключно в навчальних цілях. Автор не несе відповідальності за робочість бота, код залежить від зовнішнього API tt.sclnau.com.ua та сервера\nТакож, за сервера для цього сайту автору ніхто не платить. Тому існує можливість, що проект перестане працювати через якийсь час.')
-  await ctx.reply('Автор: BattWkru (Гарасимів Іван)\nGitHub репозиторій: <a href="https://github.com/SitewrkU/sfk_tgbot">Github</a>\nОсобливості: /features\nChangeLog: /changelog\n❔Знайшли помилку або маєте ідею для вдосконалення? Пишіть сюди: @likebattw\nОригінальний сайт: <a href="https://sclnau.com.ua/students/timetable-student.html">Сайт</a>')
+  await ctx.reply('Цей бот створений виключно в навчальних цілях. Автор не несе відповідальності за стабільну роботу, адже бот залежить від зовнішнього API tt.sclnau.com.ua та серверів, які він не контролює.\nЦе повністю волонтерський проєкт без зовнішнього фінансування, тому він може припинити існування, коли ресурси закінчаться.')
+  await ctx.reply('Автор: BattWkru (Гарасимів Іван)\nGitHub репозиторій: <a href="https://github.com/SitewrkU/sfk_tgbot">Github</a>\nОсобливості: /features\nЗміни: /changelog\n❔Знайшли помилку або маєте ідею для вдосконалення? Пишіть сюди: @likebattw\nОригінальний сайт: <a href="https://sclnau.com.ua/students/timetable-student.html">Сайт</a>')
 })
 
 bot.command('features', async (ctx) => {
-  await ctx.reply('Наш бот дає:\n⭐ Швидкий доступ до розкладу\n⭐ Виправлений неправильний час пар з офіційного розкладу')
+  await ctx.reply('Наш бот дає:\n⭐ Швидкий доступ до розкладу\n⭐ Виправлений неправильний час пар з офіційного розкладу\n⭐ Відображення наступної пари\n⭐ Відображення часу до кінця пари')
 })
 
 bot.command('changelog', async (ctx) => {
