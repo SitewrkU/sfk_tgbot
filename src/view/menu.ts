@@ -1,19 +1,18 @@
 import { Menu } from "@grammyjs/menu";
 import { getCurrentDate, getNextDate } from "../lib/GetDate.js";
 import { checkIfNextDay } from "../lib/CheckIfNextDay.js";
+import { fixTime } from "../lib/FixPairTime.js";
 import { type EditOrReplyFlavor, editOrReplyMiddleware } from "grammy-edit-or-reply";
 
 export const mainMenu = new Menu('main-menu')
   .text("Розклад", async (ctx) => {
     const isNextDay = checkIfNextDay()
+    
 
     const loadingMsg = await ctx.reply(`🔃 Отримання даних...`);
-
     const editLoading = (text: string) =>
       ctx.api.editMessageText(ctx.chat!.id, loadingMsg.message_id, text);
 
-
-    let response;
     try {
       let date = isNextDay ? getNextDate() : getCurrentDate();
       let data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=%D0%9A-11&date=${date}`)
@@ -36,7 +35,7 @@ export const mainMenu = new Menu('main-menu')
 
       let scheduleResult: string = "";
       for(const item of schedule){
-        scheduleResult += `[${item.pairNumber}] ${item.subject}\nАудиторія: <u><b>${item.room}</b></u> | 🕑 <b>${item.time}</b>` + "\n\n";
+        scheduleResult += `[${item.pairNumber}] ${item.subject}\nАудиторія: <u><b>${item.room}</b></u> | 🕑 <b>${fixTime(item.time, item.pairNumber)}</b>` + "\n\n";
       }
 
 
@@ -51,7 +50,7 @@ export const mainMenu = new Menu('main-menu')
       console.log(err)
     }
   })
-  
+
   .text("Пара зараз", async (ctx) => {
     await ctx.reply('Зараз пара');
   })

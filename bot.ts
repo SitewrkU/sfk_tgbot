@@ -29,7 +29,11 @@ bot.command('start', async (ctx) => {
 bot.command('info', async (ctx) => {
   await ctx.reply('<u>Інформація про проєкт</u>')
   await ctx.reply('Цей проєкт створений виключно в навчальних цілях. Автор не несе відповідальності за робочість бота, код залежить від зовнішнього API tt.sclnau.com.ua та сервера\nТакож, за сервера для цього сайту автору ніхто не платить. Тому існує можливість, що проект перестане працювати через якийсь час.')
-  await ctx.reply('Автор: BattWkru (Гарасимів Іван)\nGitHub репозиторій: <a href="https://github.com/SitewrkU/sfk_tgbot">Github</a>\nChangeLog: /changelog\n❔Знайшли помилку або маєте ідею для вдосконалення? Пишіть сюди: @likebattw')
+  await ctx.reply('Автор: BattWkru (Гарасимів Іван)\nGitHub репозиторій: <a href="https://github.com/SitewrkU/sfk_tgbot">Github</a>\nОсобливості: /features\nChangeLog: /changelog\n❔Знайшли помилку або маєте ідею для вдосконалення? Пишіть сюди: @likebattw\nОригінальний сайт: <a href="https://sclnau.com.ua/students/timetable-student.html">Сайт</a>')
+})
+
+bot.command('features', async (ctx) => {
+  await ctx.reply('Наш бот дає:\n⭐ Швидкий доступ до розкладу\n⭐ Виправлений неправильний час пар з офіційного розкладу')
 })
 
 bot.command('changelog', async (ctx) => {
