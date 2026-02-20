@@ -11,8 +11,8 @@ import { mainMenu } from './src/view/menu.js';
 import { editOrReplyMiddleware, type EditOrReplyFlavor } from "grammy-edit-or-reply";
 import { InputFile } from "grammy";
 import { Bot, Context } from 'grammy';
-type MyContext = Context & EditOrReplyFlavor;
-const bot = new Bot<MyContext>(TG_API_TOKEN);
+type BotContext = Context & EditOrReplyFlavor;
+const bot = new Bot<BotContext>(TG_API_TOKEN);
 
 import { parseMode } from "@grammyjs/parse-mode";
 bot.api.config.use(parseMode("HTML"));
@@ -29,7 +29,7 @@ bot.command('start', async (ctx) => {
 bot.command('info', async (ctx) => {
   await ctx.reply('<u>Інформація про проєкт</u>')
   await ctx.reply('Цей бот створений виключно в навчальних цілях. Автор не несе відповідальності за стабільну роботу, адже бот залежить від зовнішнього API tt.sclnau.com.ua та серверів, які він не контролює.\nЦе повністю волонтерський проєкт без зовнішнього фінансування, тому він може припинити існування, коли ресурси закінчаться.')
-  await ctx.reply('Автор: BattWkru (Гарасимів Іван)\nGitHub репозиторій: <a href="https://github.com/SitewrkU/sfk_tgbot">Github</a>\nОсобливості: /features\nЗміни: /changelog\n❔Знайшли помилку або маєте ідею для вдосконалення? Пишіть сюди: @likebattw\nОригінальний сайт: <a href="https://sclnau.com.ua/students/timetable-student.html">Сайт</a>')
+  await ctx.reply('Автор: BattWkru (Гарасимів Іван)\nGitHub репозиторій: <a href="https://github.com/SitewrkU/sfk_tgbot">Github</a>\nОсобливості: /features\nІсторія розробки: /changelog\nОригінальний сайт: <a href="https://sclnau.com.ua/students/timetable-student.html">Сайт</a>\n❔Знайшли помилку або маєте ідею для вдосконалення? Пишіть сюди: @likebattw')
 })
 
 bot.command('features', async (ctx) => {
