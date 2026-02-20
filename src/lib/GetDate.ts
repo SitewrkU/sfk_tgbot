@@ -1,17 +1,13 @@
+import { DateTime } from 'luxon';
+
 export function getCurrentDate(): string {
-  const d = new Date();
-  return formatDate(d);
+  const now = DateTime.now().setZone('Europe/Kyiv');
+  return now.toFormat('dd.MM.yyyy');
 }
 
 export function getNextDate(): string {
-  const d = new Date();
-  d.setDate(d.getDate() + 1); // наступний день
-  return formatDate(d);
-}
-
-function formatDate(d: Date): string {
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  return `${day}.${month}.${year}`;
+  const tomorrow = DateTime.now()
+    .setZone('Europe/Kyiv')
+    .plus({ days: 1 });
+  return tomorrow.toFormat('dd.MM.yyyy');
 }

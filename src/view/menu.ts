@@ -4,6 +4,7 @@ import { checkIfNextDay } from "../lib/CheckIfNextDay.js";
 import { fixTime } from "../lib/FixPairTime.js";
 import { getPairStatus } from "../lib/GetPairStatus.js";
 import { type EditOrReplyFlavor, editOrReplyMiddleware } from "grammy-edit-or-reply";
+import { DateTime } from "luxon";
 
 export const mainMenu = new Menu('main-menu')
   .text("Розклад", async (ctx) => {
@@ -34,6 +35,7 @@ export const mainMenu = new Menu('main-menu')
       const schedule = data.schedule.map((item: { name: any; }) => item); 
       await editLoading(`✅ Розклад на <u><b>${date}</b></u> (${date === getCurrentDate() ? 'Сьогодні' : 'Завтра'}).\nГрупа: ${group}`)
 
+      // const testTime = DateTime.fromObject({ hour: 10, minute: 5 }, { zone: 'Europe/Kyiv' }); Для тестування
       const pairStatus = getPairStatus(schedule)
       let scheduleResult: string = '';
       for(const item of schedule){

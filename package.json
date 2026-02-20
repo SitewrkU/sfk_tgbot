@@ -17,9 +17,11 @@
     "@grammyjs/parse-mode": "^1.11.1",
     "dotenv": "^17.3.1",
     "grammy": "^1.40.0",
-    "grammy-edit-or-reply": "^1.2.0"
+    "grammy-edit-or-reply": "^1.2.0",
+    "luxon": "^3.7.2"
   },
   "devDependencies": {
+    "@types/luxon": "^3.7.1",
     "@types/node": "^25.2.3",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"

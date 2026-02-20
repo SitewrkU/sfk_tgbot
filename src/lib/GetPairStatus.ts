@@ -1,14 +1,14 @@
 import { fixTime } from "./FixPairTime.js";
+import { DateTime } from 'luxon';
 
 interface PairStatus {
   pairNum: number;
   text: string;
 }
 
-
-export function getPairStatus(schedule: any[]): PairStatus | null {
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+export function getPairStatus(schedule: any[], testNow?: DateTime): PairStatus | null {
+  const now = testNow ?? DateTime.now().setZone('Europe/Kyiv');
+  const currentMinutes = now.hour * 60 + now.minute;
 
   for (let i = 0; i < schedule.length; i++) {
     const item = schedule[i];
