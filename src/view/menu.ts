@@ -1,7 +1,9 @@
 import { Menu } from "@grammyjs/menu";
 import { getSchedule } from "./features/Shedule.js";
+import { Settings } from "./Settings.js";
+import { Context } from "grammy";
 
-export const mainMenu = new Menu('main-menu')
+export const mainMenu = new Menu<Context>('main-menu')
   .text('Розклад', async (ctx) => {
     await getSchedule(ctx);
   })
@@ -10,7 +12,5 @@ export const mainMenu = new Menu('main-menu')
     await ctx.reply("Ну я не знаю ┐('～`；)┌ ");
   })
   .row()
-  .text("Налаштування", async (ctx) => {
-    await ctx.reply('Доробити (Бажано)');
-  })
+  .submenu("Налаштування", "settings")
   

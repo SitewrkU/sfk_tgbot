@@ -6,8 +6,10 @@ if (!TG_API_TOKEN) {
   throw new Error("BOT_TOKEN відсутній в .env");
 }
 
-import { mainMenu } from './src/view/menu.js';
+import { mainMenu } from "./src/view/Menu.js";
+import { Settings } from "./src/view/Settings.js";
 import { getSchedule } from "./src/view/features/Shedule.js";
+import { handleStart } from "./src/handlers/start.js";
 
 import { editOrReplyMiddleware, type EditOrReplyFlavor } from "grammy-edit-or-reply";
 import { InputFile } from "grammy";
@@ -18,18 +20,16 @@ const bot = new Bot<BotContext>(TG_API_TOKEN);
 import { parseMode } from "@grammyjs/parse-mode";
 bot.api.config.use(parseMode("HTML"));
 bot.use(editOrReplyMiddleware());
+
 bot.use(mainMenu)
+mainMenu.register([Settings,]);
 
 
 bot.command('schedule', async (ctx) => {
   await getSchedule(ctx);
 })
 
-bot.command('start', async (ctx) => {
-  await ctx.reply("Вітаю! Це неофіційний бот для отримання розкладу занять СФК ЛНУП\nЗагляніть сюди за додатковою інформацією: /info", {
-    reply_markup: mainMenu, 
-  });
-})
+bot.command('start', handleStart)
 
 bot.command('info', async (ctx) => {
   await ctx.reply('<u>Інформація про проєкт</u>')
