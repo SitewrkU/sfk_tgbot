@@ -6,7 +6,8 @@ if (!TG_API_TOKEN) {
   throw new Error("BOT_TOKEN відсутній в .env");
 }
 
-import { mainMenu, getSchedule } from './src/view/menu.js';
+import { mainMenu } from './src/view/menu.js';
+import { getSchedule } from "./src/view/features/Shedule.js";
 
 import { editOrReplyMiddleware, type EditOrReplyFlavor } from "grammy-edit-or-reply";
 import { InputFile } from "grammy";
