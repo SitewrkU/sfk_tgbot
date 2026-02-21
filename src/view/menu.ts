@@ -1,9 +1,8 @@
 import { Menu } from "@grammyjs/menu";
 import { getSchedule } from "./features/Shedule.js";
-import { Settings } from "./Settings.js";
-import { Context } from "grammy";
+import type { BotContext } from "../../bot.js";
 
-export const mainMenu = new Menu<Context>('main-menu')
+export const mainMenu = new Menu<BotContext>('main-menu')
   .text('Розклад', async (ctx) => {
     await getSchedule(ctx);
   })

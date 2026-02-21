@@ -1,12 +1,17 @@
-import { Context } from "grammy";
+import type { BotContext } from "../../../bot.js";
 import { getCurrentDate, getNextDate } from "../../lib/GetDate.js";
 import { checkIfNextDay } from "../../lib/CheckIfNextDay.js";
 import { fixTime } from "../../lib/FixPairTime.js";
 import { getPairStatus } from "../../lib/GetPairStatus.js";
 
-export async function getSchedule(ctx: Context) {
+export async function getSchedule(ctx: BotContext) {
   const isNextDay = checkIfNextDay();
-  const group = 'К-11';
+  const group = ctx.session.group;
+
+  if (!group) {
+    await ctx.reply('❌ Схоже ви не встановили свою групу. Перевірте налаштування та встановіть групу для отримання розкладу.');
+    return;
+  }
   
   const loadingMsg = await ctx.reply(`🔃 Отримання даних...`);
   

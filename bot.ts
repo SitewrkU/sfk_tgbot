@@ -6,30 +6,39 @@ if (!TG_API_TOKEN) {
   throw new Error("BOT_TOKEN відсутній в .env");
 }
 
-import { mainMenu } from "./src/view/Menu.js";
+import { mainMenu } from "./src/view/menu.js";
 import { Settings } from "./src/view/Settings.js";
 import { getSchedule } from "./src/view/features/Shedule.js";
 import { handleStart } from "./src/handlers/start.js";
 
+import type { SessionData } from "./types/types.js";
 import { editOrReplyMiddleware, type EditOrReplyFlavor } from "grammy-edit-or-reply";
-import { InputFile } from "grammy";
-import { Bot, Context } from 'grammy';
-type BotContext = Context & EditOrReplyFlavor;
-const bot = new Bot<BotContext>(TG_API_TOKEN);
+import { Bot, Context, InputFile, session, type SessionFlavor} from 'grammy';
 
-import { parseMode } from "@grammyjs/parse-mode";
+export type BotContext = 
+  Context 
+  & EditOrReplyFlavor 
+  & SessionFlavor<SessionData>;
+export const bot = new Bot<BotContext>(TG_API_TOKEN);
+
 bot.api.config.use(parseMode("HTML"));
+import { parseMode } from "@grammyjs/parse-mode";
+bot.use(session({
+  initial: (): SessionData => ({ group: undefined }),
+}));
 bot.use(editOrReplyMiddleware());
 
-bot.use(mainMenu)
-mainMenu.register([Settings,]);
 
+
+mainMenu.register([Settings]);
+bot.use(mainMenu)
+
+
+bot.command('start', handleStart)
 
 bot.command('schedule', async (ctx) => {
   await getSchedule(ctx);
 })
-
-bot.command('start', handleStart)
 
 bot.command('info', async (ctx) => {
   await ctx.reply('<u>Інформація про проєкт</u>')
@@ -39,6 +48,7 @@ bot.command('info', async (ctx) => {
 
 bot.command('features', async (ctx) => {
   await ctx.reply('Наш бот дає:\n⭐ Швидкий доступ до розкладу\n⭐ Виправлений неправильний час пар з офіційного розкладу\n⭐ Відображення наступної пари\n⭐ Відображення часу до кінця пари')
+  await ctx.replyWithSticker('CAACAgIAAxkBAAFC72Bpmf9rp_bIAtKxPOwAAa3bn3p6cjwAAmRvAALdmLBL5aK-J5yM2xE6BA')
 })
 
 bot.command('changelog', async (ctx) => {
@@ -46,6 +56,14 @@ bot.command('changelog', async (ctx) => {
   const document = new InputFile(filePath, "ChangeLog.txt");
   await ctx.replyWithDocument(document);
 })
+
+bot.callbackQuery(/^select_group:(.+)$/, async (ctx) => {
+
+  const groupName = ctx.match[1]; 
+  await ctx.answerCallbackQuery();
+  ctx.session.group = groupName;
+  await ctx.reply(`Встановлена група: ${groupName}`);
+});
 
 bot.catch((err) => {
   const ctx = err.ctx;

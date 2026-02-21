@@ -1,15 +1,15 @@
 import { Menu } from "@grammyjs/menu";
-import { handleStart } from "../handlers/start.js";
-import { Context } from "grammy";
+import { getGroups } from "./features/SelectGroup.js";
+import type { BotContext } from "../../bot.js";
 
-export const Settings = new Menu<Context>('settings')
+export const Settings = new Menu<BotContext>('settings')
   .back('← Назад')
   .row()
   .text("Змінити групу", async (ctx) => {
-    await ctx.reply("Хочеш змінити групу? Я подумаю");
+    await getGroups(ctx)
   })
   
-  .text("блабла", async (ctx) => {
-    await ctx.reply('Доробити (Бажано)');
+  .text("Якісь інші налаштування", async (ctx) => {
+    await ctx.replyWithSticker('CAACAgIAAxkBAAFC74dpmgMaiMawtr65kvsfL6vKy8a3fAAC80wAAj64OUnSf1xluBofLjoE')
   })
   
