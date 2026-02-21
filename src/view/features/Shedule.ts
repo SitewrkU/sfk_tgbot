@@ -14,33 +14,43 @@ export async function getSchedule(ctx: Context) {
     ctx.api.editMessageText(ctx.chat!.id, loadingMsg.message_id, text);
   
   try {
-    // Визначення який розклад потрібно отримати, та перевірки
-    let date = isNextDay ? getNextDate() : getCurrentDate();
+    // Визначення який розклад потрібно отримати, та отримання
+    let scheduleDate = isNextDay ? getNextDate() : getCurrentDate();
       
-    let data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=${group}&date=${date}`)
+    let data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=${group}&date=${scheduleDate}`)
       .then(r => r.json());
+
+    const hasSchedule = data.schedule && 
+      Array.isArray(data.schedule) && 
+      data.schedule.length > 0;
     
-    if ((!data.schedule || data.schedule.length === 0) && isNextDay) {
+
+    // Перевірки, якщо розклад не вдалося отримати
+    if (!hasSchedule && isNextDay) {
       await editLoading('⚠️ Розклад на завтра відсутній. Спроба повернути сьогоднішній...');
-      date = getCurrentDate();
-      data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=${group}&date=${date}`)
+      scheduleDate = getCurrentDate();
+      data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=${group}&date=${scheduleDate}`)
         .then(r => r.json());
     }
+    const finalHasSchedule = data.schedule && 
+      Array.isArray(data.schedule) && 
+      data.schedule.length > 0;
     
-    if (!data.schedule || data.schedule.length === 0) {
+
+    if (!finalHasSchedule) {
       await editLoading('❌ Розклад відсутній на обидва дні.');
       return;
     }
     
+
     // Виведення результату
 
-    const schedule = data.schedule.map((item: { name: any; }) => item);
-    await editLoading(`✅ Розклад на <u><b>${date}</b></u> (${date === getCurrentDate() ? 'Сьогодні' : 'Завтра'}).\nГрупа: ${group}`);
+    await editLoading(`✅ Розклад на <u><b>${scheduleDate}</b></u> (${scheduleDate === getCurrentDate() ? 'Сьогодні' : 'Завтра'}).\nГрупа: ${group}`);
     
-    const pairStatus = getPairStatus(schedule);
+    const pairStatus = getPairStatus(data.schedule);
     let scheduleResult: string = '';
     
-    for (const item of schedule) {
+    for (const item of data.schedule) {
       const time = fixTime(item.time, item.pairNumber);
       const isCurrentPair = pairStatus?.pairNum === item.pairNumber;
       const pairStatusText = isCurrentPair ? pairStatus!.text : '';
@@ -49,14 +59,11 @@ export async function getSchedule(ctx: Context) {
     
     await ctx.reply(scheduleResult, { parse_mode: 'HTML' });
 
-
-  } catch (err) {
-    
-    await ctx.api.editMessageText(
-      ctx.chat!.id,
-      loadingMsg.message_id,
-      '❌ Не вдалося отримати дані'
-    );
-    console.log(err);
-  }
+    }catch (err) {
+      try {
+        await editLoading('❌ Не вдалося отримати дані');
+      } catch {
+        //Ігнор помилки
+      }
+    }
 }
