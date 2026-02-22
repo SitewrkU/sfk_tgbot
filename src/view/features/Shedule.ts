@@ -9,7 +9,7 @@ export async function getSchedule(ctx: BotContext) {
   const group = ctx.session.group;
 
   if (!group) {
-    await ctx.reply('❌ Схоже ви не встановили свою групу. Перевірте налаштування та встановіть групу для отримання розкладу.');
+    await ctx.reply('❌ Схоже ви не встановили свою групу. Перевірте налаштування та встановіть групу для отримання розкладу. Або нажміть тут: /setgroup');
     return;
   }
   
