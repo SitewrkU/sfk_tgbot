@@ -5,7 +5,7 @@ import { fixTime } from "../../lib/FixPairTime.js";
 import { getPairStatus } from "../../lib/GetPairStatus.js";
 
 export async function getSchedule(ctx: BotContext) {
-  const isNextDay = checkIfNextDay();
+  const isNextDay = await checkIfNextDay(ctx);
   const group = ctx.session.group;
 
   if (!group) {
