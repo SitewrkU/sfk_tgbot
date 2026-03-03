@@ -53,17 +53,25 @@ export async function getSchedule(ctx: BotContext) {
     await editLoading(`✅ Розклад на <u><b>${scheduleDate}</b></u> (${scheduleDate === getCurrentDate() ? 'Сьогодні' : 'Завтра'}).\nГрупа: ${group}`);
     
     const pairStatus = !isNextDay ? getPairStatus(data.schedule) : null;
-
     let scheduleResult: string = '';
     
     for (const item of data.schedule) {
       const time = fixTime(item.time, item.pairNumber);
       const isCurrentPair = pairStatus?.pairNum === item.pairNumber;
       const pairStatusText = isCurrentPair ? pairStatus!.text : '';
-      scheduleResult += `[${item.pairNumber}] <b>${item.subject}</b> ${pairStatusText ? ' | ' + pairStatusText : ''}\nАудиторія: <b>${item.room}</b> | 🕑 <b>${time}</b>` + "\n\n";
+
+      const header = `¦ ${item.pairNumber} ¦ <b>${item.subject}</b>`
+      const status = pairStatusText ? ` | ${pairStatusText}` : '';
+      let details = `\nАуд.: <b>${item.room}</b> | 🕑 <b>${time}</b>`
+      if(item.teacher === 'Лесько М.М.'){
+        details += `\n❗☢☠ <b>${item.teacher}</b> ☠☢❗`;
+      }
+
+      scheduleResult += `${header}${status}${details}\n\n`;
     }
     
     await ctx.reply(scheduleResult, { parse_mode: 'HTML' });
+
 
     }catch (err) {
       try {
