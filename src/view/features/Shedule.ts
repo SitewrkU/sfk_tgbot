@@ -52,7 +52,8 @@ export async function getSchedule(ctx: BotContext) {
 
     await editLoading(`✅ Розклад на <u><b>${scheduleDate}</b></u> (${scheduleDate === getCurrentDate() ? 'Сьогодні' : 'Завтра'}).\nГрупа: ${group}`);
     
-    const pairStatus = getPairStatus(data.schedule);
+    const pairStatus = !isNextDay ? getPairStatus(data.schedule) : null;
+
     let scheduleResult: string = '';
     
     for (const item of data.schedule) {
