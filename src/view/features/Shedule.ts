@@ -3,6 +3,8 @@ import { getCurrentDate, getNextDate } from "../../lib/GetDate.js";
 import { checkIfNextDay } from "../../lib/CheckIfNextDay.js";
 import { fixTime } from "../../lib/FixPairTime.js";
 import { getPairStatus } from "../../lib/GetPairStatus.js";
+import { scheduleButtons } from "../ScheduleButtons.js";
+import { getSchedule as fetchSchedule } from "../../lib/GetSchedule.js";
 
 export async function getSchedule(ctx: BotContext) {
   const isNextDay = await checkIfNextDay(ctx);
@@ -19,37 +21,11 @@ export async function getSchedule(ctx: BotContext) {
     ctx.api.editMessageText(ctx.chat!.id, loadingMsg.message_id, text);
   
   try {
-    // Визначення який розклад потрібно отримати, та отримання
     let scheduleDate = isNextDay ? getNextDate() : getCurrentDate();
-      
-    let data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=${group}&date=${scheduleDate}`)
-      .then(r => r.json());
-
-    const hasSchedule = data.schedule && 
-      Array.isArray(data.schedule) && 
-      data.schedule.length > 0;
-    
-
-    // Перевірки, якщо розклад не вдалося отримати
-    if (!hasSchedule && isNextDay) {
-      await editLoading('⚠️ Розклад на завтра відсутній. Спроба повернути сьогоднішній...');
-      scheduleDate = getCurrentDate();
-      data = await fetch(`https://tt.sclnau.com.ua/student/GetStudent.php?group=${group}&date=${scheduleDate}`)
-        .then(r => r.json());
-    }
-    const finalHasSchedule = data.schedule && 
-      Array.isArray(data.schedule) && 
-      data.schedule.length > 0;
-    
-
-    if (!finalHasSchedule) {
-      await editLoading('❌ Розклад відсутній на обидва дні.');
-      return;
-    }
-    
+    // Отримання розкладу
+    const data = await fetchSchedule(ctx, loadingMsg.message_id, isNextDay, scheduleDate);
 
     // Виведення результату
-
     await editLoading(`✅ Розклад на <u><b>${scheduleDate}</b></u> (${scheduleDate === getCurrentDate() ? 'Сьогодні' : 'Завтра'}).\nГрупа: ${group}`);
     
     const pairStatus = !isNextDay ? getPairStatus(data.schedule) : null;
@@ -66,16 +42,20 @@ export async function getSchedule(ctx: BotContext) {
       if(item.teacher === 'Лесько М.М.'){
         details += `\n❗☢☠ <b>${item.teacher}</b> ☠☢❗`;
       }
+      if(item.teacher === 'Пошивак М.В.'){
+        details += `\n<a href="https://www.tiktok.com/@pythonblyat5/video/7347374025221393696?is_from_webapp=1&sender_device=pc&web_id=7610816937761900050">Пошивак М.В. 😮‍💨</a>`;
+      }
 
       scheduleResult += `${header}${status}${details}\n\n`;
     }
     
-    await ctx.reply(scheduleResult, { parse_mode: 'HTML' });
+    await ctx.reply(scheduleResult, { reply_markup: scheduleButtons, parse_mode: 'HTML' });
 
 
     }catch (err) {
       try {
         await editLoading('❌ Не вдалося отримати дані');
+        console.error('Помилка при отриманні розкладу:', err);
       } catch {
         //Ігнор помилки
       }

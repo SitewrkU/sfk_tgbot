@@ -7,6 +7,7 @@ if (!TG_API_TOKEN) {
 }
 
 import { mainMenu } from "./src/view/menu.js";
+import { scheduleButtons } from "./src/view/ScheduleButtons.js";
 import { Settings } from "./src/view/Settings.js";
 import { getSchedule } from "./src/view/features/Shedule.js";
 import { getGroups } from "./src/view/features/SelectGroup.js";
@@ -32,7 +33,7 @@ bot.use(editOrReplyMiddleware());
 
 
 mainMenu.register([Settings]);
-bot.use(mainMenu)
+bot.use(mainMenu, scheduleButtons);
 
 
 bot.command('start', handleStart)
