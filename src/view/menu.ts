@@ -7,7 +7,7 @@ export const mainMenu = new Menu<BotContext>('main-menu')
     await getSchedule(ctx);
   })
 
-  .text("Пара зараз", async (ctx) => {
+  .text("Відкладено", async (ctx) => {
     await ctx.reply("Ну я не знаю ┐('～`；)┌ ");
   })
   .row()
