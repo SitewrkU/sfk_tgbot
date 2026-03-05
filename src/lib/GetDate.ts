@@ -6,8 +6,13 @@ export function getCurrentDate(): string {
 }
 
 export function getNextDate(): string {
-  const tomorrow = DateTime.now()
+  let nextDay = DateTime.now()
     .setZone('Europe/Kyiv')
     .plus({ days: 1 });
-  return tomorrow.toFormat('dd.MM.yyyy');
+
+  while (nextDay.weekday === 6 || nextDay.weekday === 7) {
+    nextDay = nextDay.plus({ days: 1 });
+  }
+  
+  return nextDay.toFormat('dd.MM.yyyy');
 }
